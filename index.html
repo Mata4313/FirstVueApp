@@ -19,19 +19,19 @@
                 <img src="img/logo.png"  class="app__logo">
             </div>
             <div class="app__body">
-                <button class="app__btn">
+                <button class="app__btn" @click="goToQuestions">
                     <i class="fa fa-play-circle-o" aria-hidden="true"></i>
                     <div class="app__btn-text">Начать</div>
                 </button>
-                <button class="app__btn">
+                <button class="app__btn" @click="goToAchivments">
                     <i class="fa fa-trophy" aria-hidden="true"></i>
                     <div class="app__btn-text">Достижения</div>
                 </button>
-                <button class="app__btn">
+                <button class="app__btn" @click="goToSocial">
                     <i class="fa fa-user" aria-hidden="true"></i>
                     <div class="app__btn-text">Автор</div>
                 </button>
-                <button class="app__btn">
+                <button class="app__btn" >
                     <i class="fa fa-volume-up" aria-hidden="true"></i>
                     <div class="app__btn-text">Звук</div>
                 </button>
@@ -93,13 +93,15 @@
         <div class="app" v-show="showQuestion" >
             <div class="app__header">
                 <div class="app__header-inner">
-                    <div class="app__count"># 1</div>
-                    <div class="app__text">Текст</div>
+                    <div class="app__count"># {{ number+1 }}</div>
+                    <div class="app__text">{{ questions[number][0] }}</div>
                 </div>
             </div>
             <div class="app__body">
-                <button class="app__btn">
-                    <div class="app__btn-text">Текст 1</div>
+                <button class="app__btn"
+                        v-for = "(answer, i) in questions[number][1]"
+                        v-on:click = "nextQuestion(questions[number][2][i])"></button>
+                    <div class="app__btn-text">{{ answer }} </div>
                 </button>
             </div>
         </div>
@@ -131,7 +133,7 @@
                     <div class="app__btn-text">Youtube</div>
                 </a>
 
-                <button class="app__btn btn__back">
+                <button class="app__btn btn__back" @click = "goToMain">
                     <i class="fa fa-reply"></i>
                 </button>
             </div>
@@ -151,7 +153,7 @@
                         <p class="result__author">Автор</p>
                     </div>
                     <div>
-                        <button class="app__btn btn__back btn__zerg">
+                        <button class="app__btn btn__back btn__zerg" @click = "goToMain">
                             <i class="fa fa-reply"></i>
                         </button>
                     </div>
@@ -171,8 +173,8 @@
                 showMain: true,
                 showSocial: false,
                 showAchivments: false,
-                showQuestuins: false,
-                showResult: false,
+                showQuestion: false,
+                showReulst: false,
                 number: 0,
                 score: {
                     'zerg' : 0,
@@ -195,6 +197,74 @@
                 results: m_results,
                 resultRace: 'infested',
             },
+
+            methods: {
+                goToMain() {
+                    this.showMain= true
+                    this.showSocial= false
+                    this.showAchivments= false
+                    this.showQuestion= false
+                    this.showReulst = false
+                },
+
+                goToSocial() {
+                    this.showMain= false
+                    this.showSocial= true
+                    this.showAchivments= false
+                    this.showQuestion= false
+                    this.showReulst = false
+                },
+                
+                goToAchivments() {
+                    if(this.totalGames > 0){
+                    this.showMain= false
+                    this.showSocial= false
+                    this.showAchivments= true
+                    this.showQuestion= false
+                    this.showReulst = false
+                    }
+                    else{
+                        this.goToQuestions()
+                    }
+                },
+
+                goToQuestions() {
+                    this.showMain= false
+                    this.showSocial= false
+                    this.showAchivments= false
+                    this.showQuestion= true
+                    this.showReulst= false
+                },
+
+                goToResult(race) {
+                    this.score = {
+                        'zerg' : 0,
+                        'primal' : 0,
+                        'taldarim' : 0,
+                        'protoss' : 0,
+                        'terran' : 0,
+                    }
+                    this.showMain= false
+                    this.showSocial= false
+                    this.showAchivments= false
+                    this.showQuestion= false
+                    this.showReulst= true
+                    this.resultRace = race
+                },
+
+                nextQuestion(answer) {
+                    if(this.number == 24){
+                        this.number =0
+                        //this.endGame()
+                    }
+                    else{
+                        this.number++
+                    }
+                    eval(answer)
+                }
+            }
+
+
         })
     </script>
 </body>
